@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -19,6 +20,8 @@ const app=express();
 
 //This is used to recieve POST request from the client
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.listen(3000, () => {
     console.log('Server listening on port 3000');
