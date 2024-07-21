@@ -18,7 +18,6 @@ import {
   signOut,
 } from '../redux/user/userSlice';
 
-
 export default function Profile() {
 
   const dispatch = useDispatch();
@@ -28,19 +27,16 @@ export default function Profile() {
   const [imageError, setImageError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  
-
 
   const { currentUser, loading, error } = useSelector((state) => state.user);
+
   useEffect(() => {
     if (image) {
       handleFileUpload(image);
     }
   }, [image]);
 
-
-   const handleFileUpload = async (image) => {
-
+  const handleFileUpload = async (image) => {
     const storage = getStorage(app);
     const fileName = new Date().getTime() + image.name;
     const storageRef = ref(storage, fileName);
@@ -48,8 +44,7 @@ export default function Profile() {
     uploadTask.on(
       'state_changed',
       (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImagePercent(Math.round(progress));
       },
       (error) => {
@@ -63,12 +58,9 @@ export default function Profile() {
     );
   };
 
-
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,7 +81,7 @@ export default function Profile() {
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
     } catch (error) {
-        dispatch(updateUserFailure(error));
+      dispatch(updateUserFailure(error));
     }
   };
 
@@ -119,13 +111,10 @@ export default function Profile() {
     }
   };
 
-
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
-      {/* onSubmit={handleSubmit} className='flex flex-col gap-4' */}
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-
         <input
           type='file'
           ref={fileRef}
@@ -137,7 +126,7 @@ export default function Profile() {
         <img
           src={formData.profilePicture || currentUser.profilePicture}
           alt='profile'
-          className='h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2'
+          className='h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2 transition-transform duration-300 transform hover:scale-105 hover:shadow-lg'
           onClick={() => fileRef.current.click()}
         />
 
@@ -155,13 +144,12 @@ export default function Profile() {
           )}
         </p>
 
-
         <input
           defaultValue={currentUser.username}
           type='text'
           id='username'
           placeholder='Username'
-          className='bg-slate-100 rounded-lg p-3'
+          className='bg-slate-100 rounded-lg p-3 transition-colors duration-300 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500'
           onChange={handleChange}
         />
 
@@ -170,7 +158,7 @@ export default function Profile() {
           type='email'
           id='email'
           placeholder='Email'
-          className='bg-slate-100 rounded-lg p-3'
+          className='bg-slate-100 rounded-lg p-3 transition-colors duration-300 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500'
           onChange={handleChange}
         />
 
@@ -178,27 +166,26 @@ export default function Profile() {
           type='password'
           id='password'
           placeholder='Password'
-          className='bg-slate-100 rounded-lg p-3'
+          className='bg-slate-100 rounded-lg p-3 transition-colors duration-300 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500'
           onChange={handleChange}
         />
 
-        <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>
+        <button className='bg-slate-700 text-white p-3 rounded-lg uppercase transition-transform duration-300 transform hover:scale-105 disabled:opacity-80'>
           {loading ? 'Loading...' : 'Update'}
         </button>
       </form>
 
-       <div className='flex justify-between mt-5'>
-        <span onClick={handleDeleteAccount} className='text-red-700 cursor-pointer'>
+      <div className='flex justify-between mt-5'>
+        <span onClick={handleDeleteAccount} className='text-red-700 cursor-pointer hover:underline'>
           Delete Account
         </span>
 
-        <span onClick={handleSignOut} className='text-red-700 cursor-pointer'>
+        <span onClick={handleSignOut} className='text-red-700 cursor-pointer hover:underline'>
           Sign Out
         </span>
-
-       </div>
-        <p className='text-red-700 mt-5'>{error && 'Something went wrong!'}</p>
-        <p className='text-green-700 mt-5'>
+      </div>
+      <p className='text-red-700 mt-5'>{error && 'Something went wrong!'}</p>
+      <p className='text-green-700 mt-5'>
         {updateSuccess && 'User is updated successfully!'}
       </p>
     </div>
