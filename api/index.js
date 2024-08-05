@@ -1,3 +1,6 @@
+
+
+
 // import express from 'express';
 // import mongoose from 'mongoose';
 // import dotenv from 'dotenv';
@@ -5,6 +8,7 @@
 // import authRoutes from './routes/auth.route.js';
 // import cookieParser from 'cookie-parser';
 // import axios from 'axios';
+// import cors from 'cors';
 
 // dotenv.config();
 
@@ -19,6 +23,9 @@
 
 // const app = express();
 
+// // Allow CORS
+// app.use(cors());
+
 // // This is used to receive POST request from the client
 // app.use(express.json());
 
@@ -31,16 +38,48 @@
 // app.use('/api/user', userRoutes);
 // app.use('/api/auth', authRoutes);
 
+
+
+
+
 // // Handle research paper submission
+
 // app.post('/api/research', async (req, res) => {
+//   console.log('Request received at /api/research', req.body);
 //   try {
 //     const { paperTitle } = req.body;
-//     const response = await axios.post('http://localhost:6000/recommend', { paper_title: paperTitle });
+//     const response = await axios.post('http://127.0.0.1:6000/recommend', { paper_title: paperTitle });
+//     console.log('Response from Flask backend:', response.data);
 //     res.json(response.data);
 //   } catch (error) {
+//     console.error('Error forwarding request to Flask backend:', error);
 //     res.status(500).json({ error: 'Error forwarding request to Flask backend' });
 //   }
 // });
+
+
+// // app.post('/api/research', async (req, res) => {
+// //   console.log('Request received at /api/research', req.body);
+
+// //   const { paperTitle } = req.body;
+
+// //   if (!paperTitle) {
+// //     return res.status(400).json({ error: 'paperTitle is required' });
+// //   }
+
+// //   try {
+// //     const response = await axios.post('http://localhost:6000/recommend', { paper_title: paperTitle });
+// //     console.log('Response from Flask backend:', response.data);
+// //     res.json(response.data);
+// //   } catch (error) {
+// //     console.error('Error forwarding request to Flask backend:', error.message);
+// //     res.status(500).json({ error: 'Error forwarding request to Flask backend' });
+// //   }
+// // });
+
+
+
+
 
 // // Status code 404- User not found
 // // Status code 403- User Credentials
@@ -53,6 +92,8 @@
 //     statusCode,
 //   });
 // });
+
+
 
 
 import express from 'express';
@@ -92,12 +133,7 @@ app.listen(3000, () => {
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 
-
-
-
-
 // Handle research paper submission
-
 app.post('/api/research', async (req, res) => {
   console.log('Request received at /api/research', req.body);
   try {
@@ -111,29 +147,38 @@ app.post('/api/research', async (req, res) => {
   }
 });
 
+// Fetch paper details from Semantic Scholar
+app.get('/api/papers', async (req, res) => {
+  const query = req.query.query;
 
-// app.post('/api/research', async (req, res) => {
-//   console.log('Request received at /api/research', req.body);
+  if (!query) {
+    return res.status(400).send('Query parameter is required');
+  }
 
-//   const { paperTitle } = req.body;
+  try {
+    // to get paper Id
+    const searchResponse = await axios.get(`https://api.semanticscholar.org/graph/v1/paper/search?query=${query}`, {
+      headers: { 'x-api-key': process.env.S2_API_KEY }
+    });
+    const papers = searchResponse.data.data;
 
-//   if (!paperTitle) {
-//     return res.status(400).json({ error: 'paperTitle is required' });
-//   }
+    if (papers.length === 0) {
+      return res.status(404).send('No papers found for the given query');
+    }
 
-//   try {
-//     const response = await axios.post('http://localhost:6000/recommend', { paper_title: paperTitle });
-//     console.log('Response from Flask backend:', response.data);
-//     res.json(response.data);
-//   } catch (error) {
-//     console.error('Error forwarding request to Flask backend:', error.message);
-//     res.status(500).json({ error: 'Error forwarding request to Flask backend' });
-//   }
-// });
+    const paperId = papers[0].paperId;
 
+    // To get paper details
+    const detailsResponse = await axios.get(`https://api.semanticscholar.org/graph/v1/paper/${paperId}?fields=url,authors`, {
+      headers: { 'x-api-key': process.env.S2_API_KEY }
+    });
+    const paperDetails = detailsResponse.data;
 
-
-
+    res.json(paperDetails);
+  } catch (err) {
+    res.status(500).send('Error: ' + err.message);
+  }
+});
 
 // Status code 404- User not found
 // Status code 403- User Credentials
@@ -146,3 +191,4 @@ app.use((err, req, res, next) => {
     statusCode,
   });
 });
+
