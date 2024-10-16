@@ -5,7 +5,7 @@ This project provides personalized research paper recommendations using a combin
 ## Table of Contents
 
 1. Introduction
-2. Features
+2. Features of Project
 3. Technology Used
 4. Usage
 5. Future Work
@@ -16,7 +16,7 @@ The Research Paper Recommendation System is designed to assist users in finding 
 
 The recommendation system predicts the top 5 to 10 research papers for each user, and the website allows users to manage their profiles and update preferences for more accurate suggestions.
 
-## Features
+## Features of Project
 
 1. Content-Based Filtering: Uses a doc2vec NLP model to analyze the text content of research papers and recommend similar papers.
 2. Collaborative Filtering: Utilizes a citation matrix to recommend papers based on citation relationships between research works.
