@@ -84,43 +84,7 @@ if __name__ == '__main__':
 
 
 
-# @app.route('/recommend', methods=['POST'])
-# def recommend():
-#     data = request.json
-#     paper_title = data.get('paper_title')
 
-#     doc_id = next((i for i, paper in papers.iterrows() if paper['title'].lower() == paper_title.lower()), None)
-
-#     if doc_id is None:
-#         return jsonify({"error": "Paper not found"}), 404
-
-#     recommendations = recommend_papers(doc_id)
-
-#     response = {
-#         "paper_title": papers.loc[doc_id, 'title'],
-#         "authors": papers.loc[doc_id, 'authors'],
-#         "abstract": papers.loc[doc_id, 'abstract'],
-#         "recommendations": []
-#     }
-
-#     for idx, sim in recommendations:
-#         response['recommendations'].append({
-#             "paper_title": papers.loc[idx, 'title'],
-#             "authors": papers.loc[idx, 'authors'],
-#             "abstract": papers.loc[idx, 'abstract'],
-#             "similarity": sim
-#         })
-
-#     return jsonify(response)
-
-# @app.route('/api/research', methods=['POST'])
-# def research():
-#     data = request.json
-#     paper_title = data.get('paperTitle')
-#     if not paper_title:
-#         return jsonify({'error': 'Paper title is required'}), 400
-    
-#     try:
 #         # Find the document ID for the given paper title
 #         doc_id = next((i for i, paper in papers.iterrows() if paper['title'].lower() == paper_title.lower()), None)
 
